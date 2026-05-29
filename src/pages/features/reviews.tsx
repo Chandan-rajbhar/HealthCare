@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   motion,
   useInView,
@@ -7,9 +7,9 @@ import {
   useTransform,
   type Variants,
 } from "framer-motion"
-import { ChevronDown, Star, MessageSquare, ThumbsUp, BarChart3 } from "lucide-react"
+import { ChevronDown, Star, MessageSquare, ThumbsUp, BarChart3, Mail, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
- "@/pages/FooterPage/footerpage"
+import "@/pages/FooterPage/footerpage"
 import CommonTestimonials from "@/components/CommonTestimonials"
 import { MarketingDemoCTA } from "@/components/MarketingDemoCTA"
 import { useNavigate } from "react-router-dom"
@@ -23,7 +23,7 @@ const fadeUp: Variants = {
     y: 0,
     transition: { duration: 0.6, ease: "easeInOut" },
   },
-} satisfies Variants
+}
 
 const staggerContainer: Variants = {
   hidden: {},
@@ -33,7 +33,7 @@ const staggerContainer: Variants = {
       delayChildren: 0.1,
     },
   },
-} satisfies Variants
+}
 
 const cardVariant: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
@@ -43,9 +43,9 @@ const cardVariant: Variants = {
     scale: 1,
     transition: { duration: 0.55, ease: "easeInOut" },
   },
-} satisfies Variants
+}
 
-// ─── Reusable scroll-triggered wrapper ────────────────────────────────────────
+// ─── Scroll Reveal ─────────────────────────────────────────────────────────────
 
 function ScrollReveal({
   children,
@@ -65,60 +65,85 @@ function ScrollReveal({
       className={className}
       initial={{ opacity: 0, y: 28 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const, delay }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay }}
     >
       {children}
     </motion.div>
   )
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ─── Features ──────────────────────────────────────────────────────────────────
 
 const FEATURES = [
   {
     icon: Star,
-    title: "Collect patient reviews",
-    description: "Encourage satisfied patients to leave reviews after their appointments.",
+    title: "Automated review requests",
+    description:
+      "Send automated email and SMS review requests after patient appointments and healthcare visits.",
   },
   {
     icon: MessageSquare,
-    title: "Centralized feedback",
-    description: "View and manage patient feedback from one dashboard.",
+    title: "Patient feedback management",
+    description:
+      "Collect, monitor, and manage patient feedback from one centralized dashboard.",
   },
   {
     icon: ThumbsUp,
-    title: "Boost clinic reputation",
-    description: "Showcase positive reviews to build trust with new patients.",
+    title: "Improve online reputation",
+    description:
+      "Strengthen patient trust and healthcare credibility with positive online reviews.",
   },
   {
     icon: BarChart3,
-    title: "Review insights",
-    description: "Understand patient satisfaction and improve clinic services.",
+    title: "Real-time review insights",
+    description:
+      "Track patient satisfaction, feedback trends, and healthcare reputation performance.",
   },
 ]
+
 const FAQ_ITEMS = [
   {
-    q: "Why are patient reviews important?",
-    a: "Patient reviews help build trust, improve your clinic’s reputation, and influence new patients to book appointments.",
+    q: "What is Healthcare Reputation Management Software?",
+    a: "Healthcare Reputation Management Software helps clinics collect patient reviews, monitor feedback, manage online reputation, and improve patient engagement through automated workflows.",
   },
   {
-    q: "Can clinics request reviews automatically?",
-    a: "Yes. HealVare can send automated review requests after appointments.",
+    q: "How do patient reviews help healthcare organizations grow?",
+    a: "Positive reviews improve patient trust, strengthen online visibility, attract new patients, and support clinic growth.",
   },
   {
-    q: "Can clinics view all feedback in one place?",
-    a: "Yes. HealVare provides a centralized dashboard to monitor and manage patient reviews.",
+    q: "Can clinics automate patient review requests?",
+    a: "Yes. The platform automatically sends review requests through email and SMS after appointments and healthcare visits.",
   },
   {
-    q: "Can reviews help attract new patients?",
-    a: "Yes. Positive reviews increase credibility and encourage new patients to choose your clinic.",
+    q: "Does the software support online review monitoring?",
+    a: "Absolutely. Clinics can monitor reviews, ratings, patient feedback, and online reputation performance from one dashboard.",
   },
   {
-    q: "Can clinics track patient satisfaction?",
-    a: "Yes. Clinics can analyze review trends and feedback to improve patient experience.",
+    q: "Can healthcare staff respond to patient reviews?",
+    a: "Yes. The platform supports review response management to help clinics engage with patient feedback professionally.",
+  },
+  {
+    q: "Does the software help improve patient satisfaction?",
+    a: "Yes. Patient feedback insights help healthcare organizations improve communication, services, and patient experiences.",
+  },
+  {
+    q: "Is Healthcare Reputation Management Software suitable for multi-location clinics?",
+    a: "Yes. The platform supports clinics, hospitals, healthcare groups, and multi-provider organizations with scalable reputation management tools.",
+  },
+  {
+    q: "Can the software integrate with healthcare management systems?",
+    a: "Yes. Healthcare Reputation Management Software integrates with appointment scheduling systems, patient communication tools, and healthcare management platforms.",
   },
 ]
-const LOGOS = ["MediCare", "HealthFirst", "CareSync", "MedPlus", "ClinicHub", "WellCare"]
+
+const LOGOS = [
+  "MediCare",
+  "HealthFirst",
+  "CareSync",
+  "MedPlus",
+  "ClinicHub",
+  "WellCare",
+]
 
 // ─── FAQ Accordion ─────────────────────────────────────────────────────────────
 
@@ -137,6 +162,7 @@ function FaqAccordion() {
     >
       {FAQ_ITEMS.map((item, index) => {
         const isOpen = openIndex === index
+
         return (
           <motion.div key={index} variants={cardVariant}>
             <button
@@ -145,16 +171,21 @@ function FaqAccordion() {
             >
               <span
                 className={`text-base font-semibold transition-colors duration-200 ${
-                  isOpen ? "text-gray-900" : "text-gray-600 group-hover:text-gray-800"
+                  isOpen
+                    ? "text-gray-900"
+                    : "text-gray-600 group-hover:text-gray-800"
                 }`}
               >
                 {item.q}
               </span>
+
               <motion.span
                 animate={{ rotate: isOpen ? 180 : 0 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] as const }}
-                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
-                  isOpen ? "bg-primary text-white" : "bg-gray-100 text-gray-400"
+                transition={{ duration: 0.3 }}
+                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                  isOpen
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-gray-400"
                 }`}
               >
                 <ChevronDown size={16} />
@@ -168,10 +199,12 @@ function FaqAccordion() {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }}
+                  transition={{ duration: 0.35 }}
                   className="overflow-hidden"
                 >
-                  <p className="text-gray-500 text-sm leading-relaxed pb-6">{item.a}</p>
+                  <p className="text-gray-500 text-sm leading-relaxed pb-6">
+                    {item.a}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -182,7 +215,7 @@ function FaqAccordion() {
   )
 }
 
-// ─── Deep Dive Row ─────────────────────────────────────────────────────────────
+// ─── Deep Dive Section ─────────────────────────────────────────────────────────
 
 function DeepDiveRow({
   imageLeft,
@@ -200,72 +233,50 @@ function DeepDiveRow({
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: "-100px" })
 
-  const imageVariant = {
-    hidden: { opacity: 0, x: imageLeft ? -32 : 32 },
-    show: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
-    },
-  }
-
-  const textVariant = {
-    hidden: { opacity: 0, x: imageLeft ? 32 : -32 },
-    show: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const, delay: 0.1 },
-    },
-  }
-
   return (
     <div
       ref={ref}
-        className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full"
-
+      className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full"
     >
       <motion.div
-        className={`rounded-2xl overflow-hidden bg-gray-100 ${!imageLeft ? "order-1 lg:order-2" : ""}`}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        variants={imageVariant}
+        className={`rounded-2xl overflow-hidden bg-gray-100 ${
+          !imageLeft ? "order-1 lg:order-2" : ""
+        }`}
+        initial={{ opacity: 0, x: imageLeft ? -32 : 32 }}
+        animate={inView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.7 }}
       >
         <img
           src="/reviews.png"
-          alt="Feature preview"
+          alt="Healthcare reputation management"
           className="w-full h-full max-w-full object-cover"
         />
       </motion.div>
 
       <motion.div
         className={!imageLeft ? "order-2 lg:order-1" : ""}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        variants={textVariant}
+        initial={{ opacity: 0, x: imageLeft ? 32 : -32 }}
+        animate={inView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.7, delay: 0.1 }}
       >
-        <p className="text-xs text-primary uppercase tracking-widest mb-3">{eyebrow}</p>
-        <h3 className="text-3xl font-semibold text-gray-900 mb-4">{heading}</h3>
+        <p className="text-xs text-primary uppercase tracking-widest mb-3">
+          {eyebrow}
+        </p>
+
+        <h3 className="text-3xl font-semibold text-gray-900 mb-4">
+          {heading}
+        </h3>
+
         <p className="text-gray-500 leading-relaxed mb-6">{body}</p>
-        <motion.ul
-          className="space-y-2 text-sm text-gray-600"
-          variants={staggerContainer}
-          initial="hidden"
-          animate={inView ? "show" : "hidden"}
-        >
+
+        <ul className="space-y-2 text-sm text-gray-600">
           {bullets.map((item) => (
-            <motion.li
-              key={item}
-              className="flex items-center gap-2"
-              variants={{
-                hidden: { opacity: 0, x: -12 },
-                show: { opacity: 1, x: 0, transition: { duration: 0.4 } },
-              }}
-            >
+            <li key={item} className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block flex-shrink-0" />
               {item}
-            </motion.li>
+            </li>
           ))}
-        </motion.ul>
+        </ul>
       </motion.div>
     </div>
   )
@@ -273,108 +284,134 @@ function DeepDiveRow({
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
-export default function Reviews(){
-  const navigate = useNavigate();
-  // Subtle parallax on hero image
+export default function Reviews() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title =
+      "Healthcare Reputation Management Software | Collect & Manage Patient Reviews"
+
+    let descriptionMeta = document.querySelector('meta[name="description"]')
+    if (!descriptionMeta) {
+      descriptionMeta = document.createElement("meta")
+      descriptionMeta.setAttribute("name", "description")
+      document.head.appendChild(descriptionMeta)
+    }
+    descriptionMeta.setAttribute(
+      "content",
+      "Collect patient reviews, automate feedback requests, monitor online reputation, and improve patient trust using secure Healthcare Reputation Management Software for clinics and healthcare providers.",
+    )
+  }, [])
+
   const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  })
+
   const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 40])
 
   return (
-   <div className="bg-white overflow-x-hidden">
+    <div className="bg-white overflow-x-hidden">
+      {/* HERO */}
 
-      {/* ── HERO ── */}
-      {/* <section ref={heroRef} className="w-full bg-gray-50 py-20 overflow-hidden"> */}
-      <section ref={heroRef} className="w-full bg-gray-50 min-h-[85vh] flex items-center py-20 overflow-hidden">
-        {/* <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"> */}
+      <section
+        ref={heroRef}
+        className="w-full bg-gray-50 min-h-[85vh] flex items-center py-20 overflow-hidden"
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+          {/* Left */}
 
-          {/* Left — staggered text reveal */}
-        <motion.div
-  className="flex flex-col justify-center"
-  initial="hidden"
-  animate="show"
-  variants={staggerContainer}
->
-
+          <motion.div
+            className="flex flex-col justify-center"
+            initial="hidden"
+            animate="show"
+            variants={staggerContainer}
+          >
             <motion.h1
-              className="text-4xl lg:text-5xl font-semibold text-gray-900 leading-tight mb-6"
+              className="text-3xl lg:text-3xl font-semibold text-gray-900 leading-tight mb-6"
               variants={fadeUp}
             >
-            Collect and manage patient reviews
+              Collect & Manage Patient Reviews with Healthcare Reputation
+              Management Software
             </motion.h1>
 
             <motion.p
               className="text-gray-600 text-lg mb-4"
               variants={fadeUp}
             >
-        Encourage happy patients to leave reviews and strengthen your clinic’s reputation.
+              Improve online reputation, collect patient feedback, increase
+              positive healthcare reviews, and strengthen patient trust using
+              secure Healthcare Reputation Management Software designed for
+              clinics and healthcare providers.
             </motion.p>
 
-            <motion.p
-              className="text-gray-500 mb-8 leading-relaxed"
+            <motion.div
+              className="flex flex-wrap gap-4 mt-6"
               variants={fadeUp}
             >
-HealVare Reviews helps clinics collect feedback, showcase positive experiences, and build trust with new patients.</motion.p>
-
-            <motion.div variants={fadeUp}>
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                className="inline-block"
+              <Button
+                className="rounded-full px-8 h-11 cursor-pointer"
+                onClick={() => navigate("/free-trial")}
               >
-                <Button className="rounded-half px-10 h-11 cursor-pointer" onClick={() => navigate("/book-demo")}>
-                  Book a Demo
-                </Button>
-              </motion.div>
+                Start Free Trial
+              </Button>
+
+              <Button
+                variant="outline"
+                className="rounded-full px-8 h-11 cursor-pointer"
+                onClick={() => navigate("/book-demo")}
+              >
+                Schedule a Live Demo
+              </Button>
             </motion.div>
           </motion.div>
 
-          {/* Right — image with parallax */}
-         <motion.div
-  className="relative flex items-center justify-center min-h-[400px] lg:min-h-[500px]"
-  initial={{ opacity: 0, scale: 0.96, x: 32 }}
-  animate={{ opacity: 1, scale: 1, x: 0 }}
-  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const, delay: 0.15 }}
->
-  <motion.div
-    className="rounded-2xl overflow-hidden shadow-xl w-full h-full max-h-[550px]"
-    style={{ y: heroImageY }}
-  >
-    <img
-      src="/reviews.png"
-      alt="Insurance Claims Preview"
-      className="w-full h-full object-cover object-top"
-    />
-  </motion.div>
-</motion.div>
+          {/* Right */}
+
+          <motion.div
+            className="relative flex items-center justify-center min-h-[400px] lg:min-h-[500px]"
+            initial={{ opacity: 0, scale: 0.96, x: 32 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.div
+              className="rounded-2xl overflow-hidden shadow-xl w-full h-full max-h-[550px]"
+              style={{ y: heroImageY }}
+            >
+              <img
+                src="/reviews.png"
+                alt="Healthcare Reputation Management Software"
+                className="w-full h-full object-cover object-top"
+              />
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── LOGOS BAR ── */}
+      {/* LOGOS */}
+
       <section className="bg-white py-12 px-6 border-y border-gray-100">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal>
             <p className="text-center text-sm text-gray-400 uppercase tracking-widest mb-8">
-              Trusted by 500+ clinics worldwide
+              Trusted by healthcare providers worldwide
             </p>
           </ScrollReveal>
+
           <motion.div
             className="flex flex-wrap justify-center items-center gap-10 opacity-40 grayscale"
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "-60px" }}
+            viewport={{ once: true }}
             variants={staggerContainer}
           >
             {LOGOS.map((name) => (
               <motion.span
                 key={name}
                 className="text-xl font-bold text-gray-400 tracking-tight"
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-                }}
+                variants={cardVariant}
               >
                 {name}
               </motion.span>
@@ -383,17 +420,23 @@ HealVare Reviews helps clinics collect feedback, showcase positive experiences, 
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
+      {/* FEATURES */}
+
       <section className="bg-gray-50 py-20 px-6">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal>
             <h2 className="text-3xl font-semibold text-center text-gray-900">
-             Everything you need to manage patient reviews
+              Simplify Patient Review Collection & Online Reputation Management
             </h2>
           </ScrollReveal>
+
           <ScrollReveal delay={0.08}>
-            <p className="text-center text-gray-600 mt-4 max-w-2xl mx-auto">
-             Collect feedback, monitor patient satisfaction, and build a stronger clinic reputation.
+            <p className="text-center text-gray-600 mt-4 max-w-3xl mx-auto">
+              Patient reviews influence healthcare decisions and clinic growth.
+              Healthcare Review Management Software helps clinics automate
+              review requests, monitor patient feedback, manage online
+              reputation, and improve patient satisfaction from one centralized
+              platform.
             </p>
           </ScrollReveal>
 
@@ -401,11 +444,12 @@ HealVare Reviews helps clinics collect feedback, showcase positive experiences, 
             className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-14"
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "-80px" }}
+            viewport={{ once: true }}
             variants={staggerContainer}
           >
             {FEATURES.map((feature) => {
               const Icon = feature.icon
+
               return (
                 <motion.div
                   key={feature.title}
@@ -414,17 +458,19 @@ HealVare Reviews helps clinics collect feedback, showcase positive experiences, 
                   whileHover={{
                     y: -6,
                     boxShadow: "0 12px 32px -4px rgba(0,0,0,0.10)",
-                    transition: { duration: 0.25, ease: "easeOut" },
                   }}
                 >
-                  <motion.div
-                    className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4"
-                    whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                  >
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <Icon className="w-5 h-5 text-primary" />
-                  </motion.div>
-                  <h3 className="font-semibold text-lg text-gray-900">{feature.title}</h3>
-                  <p className="mt-2 text-gray-600 text-sm">{feature.description}</p>
+                  </div>
+
+                  <h3 className="font-semibold text-lg text-gray-900">
+                    {feature.title}
+                  </h3>
+
+                  <p className="mt-2 text-gray-600 text-sm">
+                    {feature.description}
+                  </p>
                 </motion.div>
               )
             })}
@@ -432,83 +478,165 @@ HealVare Reviews helps clinics collect feedback, showcase positive experiences, 
         </div>
       </section>
 
-      {/* ── PRODUCT DEEP DIVE ── */}
-      <section className="bg-white py-20 px-6">
-        <div className="mx-auto max-w-6xl space-y-24">
-<DeepDiveRow
-  imageLeft
-eyebrow="Patient feedback"
-heading="Collect authentic patient reviews"
-body="Automatically request feedback from patients and collect valuable reviews after appointments."
-bullets={[
-  "Automated review requests",
-  "Easy patient feedback collection",
-  "Increase positive reviews",
-]}
-/>
+      {/* EMAIL & SMS FEEDBACK */}
 
-<DeepDiveRow
-  imageLeft={false}
-eyebrow="Reputation management"
-heading="Build trust with new patients"
-body="Showcase positive patient experiences to build credibility and attract more bookings."
-bullets={[
-  "Highlight positive feedback",
-  "Improve clinic reputation",
-  "Attract new patients",
-]}
-/>
+      <section className="bg-white py-20 px-6">
+        <div className="mx-auto max-w-6xl grid gap-12 lg:grid-cols-2 items-center">
+          <div>
+            <ScrollReveal>
+              <p className="text-xs text-primary uppercase tracking-widest mb-3">
+                Email & SMS Review Requests
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+                Automate patient review requests with email and SMS
+              </h2>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.08}>
+              <p className="text-gray-600 leading-relaxed mb-8">
+                Reach patients after appointments with automated review requests through email and SMS to increase positive feedback and strengthen online reputation.
+              </p>
+            </ScrollReveal>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary mb-4">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                  Email review campaigns
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Send automated review requests via email after patient visits to collect feedback and build online reputation.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary mb-4">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                  SMS review reminders
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Notify patients via SMS to leave reviews, share feedback, and engage with your healthcare clinic.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl overflow-hidden bg-gray-100 shadow-xl">
+            <img
+              src="/email.png"
+              alt="Email and SMS patient review requests"
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
+      {/* DEEP DIVE */}
+
+      <section className="bg-white py-20 px-6">
+        <div className="mx-auto max-w-6xl space-y-24">
+          <DeepDiveRow
+            imageLeft
+            eyebrow="Patient Review Management"
+            heading="Collect More Patient Reviews & Strengthen Healthcare Trust"
+            body="Encourage patients to share feedback after appointments and healthcare visits using automated review collection workflows designed to improve online visibility and patient confidence."
+            bullets={[
+              "Automated patient review requests",
+              "Email & SMS review campaigns",
+              "Multi-platform review management",
+            ]}
+          />
+
+          <DeepDiveRow
+            imageLeft={false}
+            eyebrow="Healthcare Reputation Growth"
+            heading="Healthcare Reputation Management Software Built for Clinic Growth"
+            body="Improve online visibility, attract new patients, and strengthen healthcare credibility using intelligent Patient Review & Reputation Management Software."
+            bullets={[
+              "Increase positive patient reviews",
+              "Improve online healthcare reputation",
+              "Strengthen patient trust and engagement",
+            ]}
+          />
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+
       <CommonTestimonials />
 
-      {/* ── FAQ ── */}
+      {/* FAQ */}
+
       <section className="bg-white py-20 px-6">
         <div className="mx-auto max-w-3xl">
           <ScrollReveal>
             <h2 className="text-4xl font-semibold text-center text-gray-900 mb-12">
-              Frequently asked questions
+              Frequently Asked Questions
             </h2>
           </ScrollReveal>
+
           <FaqAccordion />
         </div>
       </section>
 
-      {/* ── CTA ── */}
+      {/* CTA */}
+
       <section className="py-20 px-6">
         <motion.div
           className="mx-auto max-w-4xl text-center"
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true }}
           variants={staggerContainer}
         >
           <motion.h2
             className="text-3xl font-semibold text-gray-900"
             variants={fadeUp}
           >
-           Build a stronger clinic reputation
+            Strengthen Your Healthcare Reputation with Patient Review Management
+            Software
           </motion.h2>
-          <motion.p className="mt-4 text-gray-600" variants={fadeUp}>
-       See how HealVare Reviews helps clinics collect feedback and build patient trust.
+
+          <motion.p
+            className="mt-4 text-gray-600 max-w-3xl mx-auto"
+            variants={fadeUp}
+          >
+            Manage patient reviews, automate feedback collection, monitor online
+            reputation, and improve patient engagement using secure,
+            cloud-based Healthcare Reputation Management Software built for
+            clinics and healthcare organizations.
           </motion.p>
-          <motion.div variants={fadeUp} className="mt-8 inline-flex justify-center">
-            <motion.div
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 400, damping: 18 }}
+
+          <motion.div
+            variants={fadeUp}
+            className="mt-8 flex flex-wrap justify-center gap-4"
+          >
+            <Button
+              className="rounded-full px-8 h-11 cursor-pointer"
+              onClick={() => navigate("/book-demo")}
             >
-              <Button className="rounded-half px-10 h-11 cursor-pointer" onClick={() => navigate("/book-demo")}>
-                Schedule a demo
-              </Button>
-            </motion.div>
+              Book a Live Demo
+            </Button>
+
+            <Button
+              variant="outline"
+              className="rounded-full px-8 h-11 cursor-pointer"
+              onClick={() => navigate("/free-trial")}
+            >
+              Start Free Trial
+            </Button>
           </motion.div>
         </motion.div>
       </section>
-<MarketingDemoCTA />
 
+      <MarketingDemoCTA />
     </div>
   )
 }

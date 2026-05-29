@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   motion,
   useInView,
@@ -7,9 +7,16 @@ import {
   useTransform,
   type Variants,
 } from "framer-motion"
-import { ChevronDown, Gift, CreditCard, Ticket, Wallet } from "lucide-react"
+import {
+  ChevronDown,
+  Gift,
+  CreditCard,
+  Ticket,
+  Wallet,
+  Mail,
+  Bell,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
- "@/pages/FooterPage/footerpage"
 import CommonTestimonials from "@/components/CommonTestimonials"
 import { MarketingDemoCTA } from "@/components/MarketingDemoCTA"
 import { useNavigate } from "react-router-dom"
@@ -23,7 +30,7 @@ const fadeUp: Variants = {
     y: 0,
     transition: { duration: 0.6, ease: "easeInOut" },
   },
-} satisfies Variants
+}
 
 const staggerContainer: Variants = {
   hidden: {},
@@ -33,7 +40,7 @@ const staggerContainer: Variants = {
       delayChildren: 0.1,
     },
   },
-} satisfies Variants
+}
 
 const cardVariant: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
@@ -43,9 +50,9 @@ const cardVariant: Variants = {
     scale: 1,
     transition: { duration: 0.55, ease: "easeInOut" },
   },
-} satisfies Variants
+}
 
-// ─── Reusable scroll-triggered wrapper ────────────────────────────────────────
+// ─── Scroll Reveal ─────────────────────────────────────────────────────────────
 
 function ScrollReveal({
   children,
@@ -65,78 +72,92 @@ function ScrollReveal({
       className={className}
       initial={{ opacity: 0, y: 28 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const, delay }}
+      transition={{
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay,
+      }}
     >
       {children}
     </motion.div>
   )
 }
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ─── Features ──────────────────────────────────────────────────────────────────
 
 const FEATURES = [
   {
     icon: Gift,
-    title: "Sell digital gift cards",
-    description: "Offer digital gift cards that patients can purchase and send to others.",
+    title: "Digital & physical gift cards",
+    description:
+      "Manage both online and in-clinic gift card programs from one centralized platform.",
   },
   {
     icon: CreditCard,
-    title: "Easy redemption",
-    description: "Patients can easily redeem gift cards during appointments or treatments.",
+    title: "Online gift card sales",
+    description:
+      "Allow patients to securely purchase healthcare and wellness gift cards online.",
   },
   {
     icon: Ticket,
-    title: "Flexible amounts",
-    description: "Allow patients to purchase gift cards with customizable values.",
+    title: "Automated redemption tracking",
+    description:
+      "Track balances, redemptions, and transaction history automatically.",
   },
   {
     icon: Wallet,
-    title: "Track gift card usage",
-    description: "Monitor purchases, redemptions, and gift card balances in one place.",
+    title: "Revenue management",
+    description:
+      "Monitor gift card sales, revenue performance, and patient activity from one dashboard.",
   },
 ]
+
 const FAQ_ITEMS = [
   {
-    q: "What are clinic gift cards?",
-    a: "Clinic gift cards allow patients to purchase treatments or services as a gift for others.",
+    q: "What is Healthcare Gift Card Software?",
+    a: "Healthcare Gift Card Software helps clinics sell, manage, track, and redeem digital and physical gift cards for healthcare services, wellness treatments, and patient promotions.",
   },
   {
-    q: "Can patients buy gift cards online?",
-    a: "Yes. Patients can easily purchase digital gift cards online for friends or family.",
+    q: "How do clinic gift cards help healthcare businesses grow?",
+    a: "Gift cards increase revenue, encourage patient referrals, improve retention, and help clinics attract new patients through promotional campaigns.",
   },
   {
-    q: "Can gift cards be redeemed for treatments?",
-    a: "Yes. Patients can use gift cards to pay for treatments, services, or products at the clinic.",
+    q: "Can patients purchase gift cards online?",
+    a: "Yes. Patients can securely purchase digital gift cards online and send them directly through email or SMS.",
   },
   {
-    q: "Can clinics set custom gift card amounts?",
-    a: "Yes. Clinics can offer fixed or flexible gift card values.",
+    q: "Does the software support physical and digital gift cards?",
+    a: "Yes. The platform supports both physical and digital gift card management with centralized tracking and redemption tools.",
   },
   {
-    q: "Can clinics track gift card usage?",
-    a: "Yes. HealVare allows clinics to track gift card purchases, balances, and redemptions.",
+    q: "Can clinics automate gift card promotions and campaigns?",
+    a: "Absolutely. Clinics can automate holiday promotions, referral campaigns, wellness offers, and marketing workflows using integrated campaign tools.",
+  },
+  {
+    q: "Does the platform track gift card balances and redemption history?",
+    a: "Yes. Healthcare teams can monitor gift card purchases, balances, redemptions, and transaction activity through one dashboard.",
   },
 ]
-const LOGOS = ["MediCare", "HealthFirst", "CareSync", "MedPlus", "ClinicHub", "WellCare"]
 
-// ─── FAQ Accordion ─────────────────────────────────────────────────────────────
+const LOGOS = [
+  "MediCare",
+  "HealthFirst",
+  "CareSync",
+  "MedPlus",
+  "ClinicHub",
+  "WellCare",
+]
+
+// ─── FAQ ───────────────────────────────────────────────────────────────────────
 
 function FaqAccordion() {
   const [openIndex, setOpenIndex] = useState<number>(0)
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: "-60px" })
 
   return (
-    <motion.div
-      ref={ref}
-      className="divide-y divide-gray-200 border-t border-gray-200"
-      initial="hidden"
-      animate={inView ? "show" : "hidden"}
-      variants={staggerContainer}
-    >
+    <div className="divide-y divide-gray-200 border-t border-gray-200">
       {FAQ_ITEMS.map((item, index) => {
         const isOpen = openIndex === index
+
         return (
           <motion.div key={index} variants={cardVariant}>
             <button
@@ -144,45 +165,49 @@ function FaqAccordion() {
               onClick={() => setOpenIndex(isOpen ? -1 : index)}
             >
               <span
-                className={`text-base font-semibold transition-colors duration-200 ${
-                  isOpen ? "text-gray-900" : "text-gray-600 group-hover:text-gray-800"
+                className={`text-base font-semibold ${
+                  isOpen
+                    ? "text-gray-900"
+                    : "text-gray-600 group-hover:text-gray-800"
                 }`}
               >
                 {item.q}
               </span>
+
               <motion.span
                 animate={{ rotate: isOpen ? 180 : 0 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] as const }}
-                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
-                  isOpen ? "bg-primary text-white" : "bg-gray-100 text-gray-400"
+                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  isOpen
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 text-gray-400"
                 }`}
               >
                 <ChevronDown size={16} />
               </motion.span>
             </button>
 
-            <AnimatePresence initial={false}>
+            <AnimatePresence>
               {isOpen && (
                 <motion.div
-                  key="content"
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }}
                   className="overflow-hidden"
                 >
-                  <p className="text-gray-500 text-sm leading-relaxed pb-6">{item.a}</p>
+                  <p className="text-gray-500 text-sm leading-relaxed pb-6">
+                    {item.a}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
         )
       })}
-    </motion.div>
+    </div>
   )
 }
 
-// ─── Deep Dive Row ─────────────────────────────────────────────────────────────
+// ─── Deep Dive ─────────────────────────────────────────────────────────────────
 
 function DeepDiveRow({
   imageLeft,
@@ -197,318 +222,339 @@ function DeepDiveRow({
   body: string
   bullets: string[]
 }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: "-100px" })
-
-  const imageVariant = {
-    hidden: { opacity: 0, x: imageLeft ? -32 : 32 },
-    show: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
-    },
-  }
-
-  const textVariant = {
-    hidden: { opacity: 0, x: imageLeft ? 32 : -32 },
-    show: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const, delay: 0.1 },
-    },
-  }
-
   return (
-    <div
-      ref={ref}
-        className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full"
-
-    >
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
       <motion.div
-        className={`rounded-2xl overflow-hidden bg-gray-100 ${!imageLeft ? "order-1 lg:order-2" : ""}`}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        variants={imageVariant}
+        className={`rounded-2xl overflow-hidden bg-gray-100 ${
+          !imageLeft ? "order-1 lg:order-2" : ""
+        }`}
       >
         <img
           src="/loyalty.png"
-          alt="Feature preview"
-          className="w-full h-full max-w-full object-cover"
+          alt="Gift card management software"
+          className="w-full h-full object-cover"
         />
       </motion.div>
 
-      <motion.div
-        className={!imageLeft ? "order-2 lg:order-1" : ""}
-        initial="hidden"
-        animate={inView ? "show" : "hidden"}
-        variants={textVariant}
-      >
-        <p className="text-xs text-primary uppercase tracking-widest mb-3">{eyebrow}</p>
-        <h3 className="text-3xl font-semibold text-gray-900 mb-4">{heading}</h3>
+      <motion.div className={!imageLeft ? "order-2 lg:order-1" : ""}>
+        <p className="text-xs text-primary uppercase tracking-widest mb-3">
+          {eyebrow}
+        </p>
+
+        <h3 className="text-3xl font-semibold text-gray-900 mb-4">
+          {heading}
+        </h3>
+
         <p className="text-gray-500 leading-relaxed mb-6">{body}</p>
-        <motion.ul
-          className="space-y-2 text-sm text-gray-600"
-          variants={staggerContainer}
-          initial="hidden"
-          animate={inView ? "show" : "hidden"}
-        >
+
+        <ul className="space-y-2 text-sm text-gray-600">
           {bullets.map((item) => (
-            <motion.li
-              key={item}
-              className="flex items-center gap-2"
-              variants={{
-                hidden: { opacity: 0, x: -12 },
-                show: { opacity: 1, x: 0, transition: { duration: 0.4 } },
-              }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block flex-shrink-0" />
+            <li key={item} className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
               {item}
-            </motion.li>
+            </li>
           ))}
-        </motion.ul>
+        </ul>
       </motion.div>
     </div>
   )
 }
 
-// ─── Page ──────────────────────────────────────────────────────────────────────
+// ─── PAGE ──────────────────────────────────────────────────────────────────────
 
-export default function GiftCards(){
-  const navigate = useNavigate();
-  // Subtle parallax on hero image
+export default function GiftCards() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title =
+      "Healthcare Gift Card Software | Sell & Manage Clinic Gift Cards Online"
+
+    let descriptionMeta = document.querySelector('meta[name="description"]')
+    if (!descriptionMeta) {
+      descriptionMeta = document.createElement("meta")
+      descriptionMeta.setAttribute("name", "description")
+      document.head.appendChild(descriptionMeta)
+    }
+    descriptionMeta.setAttribute(
+      "content",
+      "Sell digital and physical clinic gift cards, automate promotions, manage gift card redemption, and increase healthcare revenue using secure Healthcare Gift Card Management Software.",
+    )
+  }, [])
+
   const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  })
+
   const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 40])
 
   return (
-   <div className="bg-white overflow-x-hidden">
+    <div className="bg-white overflow-x-hidden">
 
-      {/* ── HERO ── */}
-      {/* <section ref={heroRef} className="w-full bg-gray-50 py-20 overflow-hidden"> */}
-      <section ref={heroRef} className="w-full bg-gray-50 min-h-[85vh] flex items-center py-20 overflow-hidden">
-        {/* <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"> */}
+      {/* HERO */}
+
+      <section
+        ref={heroRef}
+        className="w-full bg-gray-50 min-h-[85vh] flex items-center py-20 overflow-hidden"
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
 
-          {/* Left — staggered text reveal */}
           <motion.div
-  className="flex flex-col justify-center"
-  initial="hidden"
-  animate="show"
-  variants={staggerContainer}
->
-
+            className="flex flex-col justify-center"
+            initial="hidden"
+            animate="show"
+            variants={staggerContainer}
+          >
             <motion.h1
-              className="text-4xl lg:text-5xl font-semibold text-gray-900 leading-tight mb-6"
+              className="text-3xl lg:text-4xl font-semibold text-gray-900 leading-tight mb-6"
               variants={fadeUp}
             >
-            Sell and manage clinic gift cards
+              Sell & Manage Clinic Gift Cards with Healthcare Gift Card Software
             </motion.h1>
 
             <motion.p
               className="text-gray-600 text-lg mb-4"
               variants={fadeUp}
             >
-        Let patients purchase and gift treatments with easy-to-manage clinic gift cards.
+              Increase clinic revenue, improve patient engagement, and simplify
+              gift card management using secure Healthcare Gift Card Software.
             </motion.p>
 
             <motion.p
-              className="text-gray-500 mb-8 leading-relaxed"
+              className="text-gray-600 mb-8 leading-relaxed"
               variants={fadeUp}
             >
-HealVare Gift Cards help clinics generate new revenue and attract new patients through flexible digital gift cards.            </motion.p>
+              Sell digital and physical clinic gift cards, automate redemption
+              workflows, and manage promotions from one centralized healthcare
+              platform.
+            </motion.p>
 
             <motion.div variants={fadeUp}>
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                className="inline-block"
+              <Button
+                className="rounded-half px-10 h-11 cursor-pointer"
+                onClick={() => navigate("/book-demo")}
               >
-                <Button className="rounded-half px-10 h-11 cursor-pointer" onClick={() => navigate("/book-demo")}>
-                  Book a Demo
-                </Button>
-              </motion.div>
+                Schedule a Live Demo
+              </Button>
             </motion.div>
           </motion.div>
 
-          {/* Right — image with parallax */}
-        <motion.div
-  className="relative flex items-center justify-center min-h-[400px] lg:min-h-[500px]"
-  initial={{ opacity: 0, scale: 0.96, x: 32 }}
-  animate={{ opacity: 1, scale: 1, x: 0 }}
-  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const, delay: 0.15 }}
->
-  <motion.div
-    className="rounded-2xl overflow-hidden shadow-xl w-full h-full max-h-[550px]"
-    style={{ y: heroImageY }}
-  >
-    <img
-      src="/loyalty.png"
-      alt="Insurance Claims Preview"
-      className="w-full h-full object-cover object-top"
-    />
-  </motion.div>
-</motion.div>
-        </div>
-      </section>
-
-      {/* ── LOGOS BAR ── */}
-      <section className="bg-white py-12 px-6 border-y border-gray-100">
-        <div className="mx-auto max-w-6xl">
-          <ScrollReveal>
-            <p className="text-center text-sm text-gray-400 uppercase tracking-widest mb-8">
-              Trusted by 500+ clinics worldwide
-            </p>
-          </ScrollReveal>
           <motion.div
-            className="flex flex-wrap justify-center items-center gap-10 opacity-40 grayscale"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={staggerContainer}
+            className="relative flex items-center justify-center min-h-[400px] lg:min-h-[500px]"
           >
-            {LOGOS.map((name) => (
-              <motion.span
-                key={name}
-                className="text-xl font-bold text-gray-400 tracking-tight"
-                variants={{
-                  hidden: { opacity: 0, y: 12 },
-                  show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-                }}
-              >
-                {name}
-              </motion.span>
-            ))}
+            <motion.div
+              className="rounded-2xl overflow-hidden shadow-xl w-full h-full max-h-[550px]"
+              style={{ y: heroImageY }}
+            >
+              <img
+                src="/loyalty.png"
+                alt="Healthcare Gift Card Software"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
+      {/* LOGOS */}
+
+      <section className="bg-white py-12 px-6 border-y border-gray-100">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-center text-sm text-gray-400 uppercase tracking-widest mb-8">
+            Trusted by 500+ clinics worldwide
+          </p>
+
+          <div className="flex flex-wrap justify-center items-center gap-10 opacity-40 grayscale">
+            {LOGOS.map((name) => (
+              <span
+                key={name}
+                className="text-xl font-bold text-gray-400 tracking-tight"
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+
       <section className="bg-gray-50 py-20 px-6">
         <div className="mx-auto max-w-6xl">
-          <ScrollReveal>
-            <h2 className="text-3xl font-semibold text-center text-gray-900">
-             Everything you need to sell clinic gift cards
-            </h2>
-          </ScrollReveal>
-          <ScrollReveal delay={0.08}>
-            <p className="text-center text-gray-600 mt-4 max-w-2xl mx-auto">
-             Sell, manage, and redeem gift cards easily while bringing new patients to your clinic.
-            </p>
-          </ScrollReveal>
 
-          <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-14"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={staggerContainer}
-          >
+          <h2 className="text-3xl font-semibold text-center text-gray-900">
+            Simplify Clinic Gift Card Sales & Patient Promotions
+          </h2>
+
+          <p className="text-center text-gray-600 mt-4 max-w-3xl mx-auto">
+            Healthcare organizations can grow revenue and attract new patients
+            through digital and physical gift card programs.
+          </p>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-14">
             {FEATURES.map((feature) => {
               const Icon = feature.icon
+
               return (
                 <motion.div
                   key={feature.title}
                   className="bg-white rounded-xl p-6 shadow-sm border"
                   variants={cardVariant}
-                  whileHover={{
-                    y: -6,
-                    boxShadow: "0 12px 32px -4px rgba(0,0,0,0.10)",
-                    transition: { duration: 0.25, ease: "easeOut" },
-                  }}
                 >
-                  <motion.div
-                    className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4"
-                    whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                  >
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                     <Icon className="w-5 h-5 text-primary" />
-                  </motion.div>
-                  <h3 className="font-semibold text-lg text-gray-900">{feature.title}</h3>
-                  <p className="mt-2 text-gray-600 text-sm">{feature.description}</p>
+                  </div>
+
+                  <h3 className="font-semibold text-lg text-gray-900">
+                    {feature.title}
+                  </h3>
+
+                  <p className="mt-2 text-gray-600 text-sm">
+                    {feature.description}
+                  </p>
                 </motion.div>
               )
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* ── PRODUCT DEEP DIVE ── */}
+      {/* EMAIL & SMS */}
+
+      <section className="bg-white py-20 px-6">
+        <div className="mx-auto max-w-6xl grid gap-12 lg:grid-cols-2 items-center">
+          <div>
+            <ScrollReveal>
+              <p className="text-xs text-primary uppercase tracking-widest mb-3">
+                Email & SMS Gift Card Outreach
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+                Promote gift cards with email and SMS campaigns
+              </h2>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.08}>
+              <p className="text-gray-600 leading-relaxed mb-8">
+                Drive gift card sales and redemption with automated email and SMS messages that reach patients when it matters most.
+              </p>
+            </ScrollReveal>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary mb-4">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                  Email promotions
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Send digital gift card offers, promotional reminders, and campaign updates directly to patient inboxes.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary mb-4">
+                  <Bell className="w-5 h-5" />
+                </div>
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                  SMS reminders
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Notify patients about gift card balances, redemption deadlines, and special offers over SMS.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl overflow-hidden bg-gray-100 shadow-xl">
+            <img
+              src="/email.png"
+              alt="Email and SMS gift card communication"
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* DEEP DIVE */}
+
       <section className="bg-white py-20 px-6">
         <div className="mx-auto max-w-6xl space-y-24">
-<DeepDiveRow
-  imageLeft
-eyebrow="New revenue"
-heading="Sell digital gift cards"
-body="Offer digital gift cards that patients can purchase for themselves or gift to friends and family."
-bullets={[
-  "Digital gift card purchases",
-  "Flexible gift card values",
-  "Attract new patients",
-]}
-/>
 
-<DeepDiveRow
-  imageLeft={false}
-eyebrow="Easy redemption"
-heading="Redeem gift cards seamlessly"
-body="Patients can easily redeem gift cards during appointments, making the checkout process smooth and simple."
-bullets={[
-  "Simple redemption at checkout",
-  "Track balances and usage",
-  "Smooth patient experience",
-]}
-/>
+          <DeepDiveRow
+            imageLeft
+            eyebrow="Gift card management"
+            heading="Offer flexible gift card options"
+            body="Allow patients to purchase and redeem digital or physical gift cards for healthcare services, wellness treatments, and clinic packages."
+            bullets={[
+              "Digital gift card sales",
+              "Physical gift card management",
+              "Automated redemption workflows",
+            ]}
+          />
+
+          <DeepDiveRow
+            imageLeft={false}
+            eyebrow="Revenue growth"
+            heading="Increase clinic revenue with automated promotions"
+            body="Launch promotional gift card campaigns, seasonal offers, and referral incentives to improve patient acquisition and retention."
+            bullets={[
+              "Promotional campaign automation",
+              "Integrated payment workflows",
+              "Improved patient loyalty",
+            ]}
+          />
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
+      {/* TESTIMONIALS */}
+
       <CommonTestimonials />
 
-      {/* ── FAQ ── */}
+      {/* FAQ */}
+
       <section className="bg-white py-20 px-6">
         <div className="mx-auto max-w-3xl">
-          <ScrollReveal>
-            <h2 className="text-4xl font-semibold text-center text-gray-900 mb-12">
-              Frequently asked questions
-            </h2>
-          </ScrollReveal>
+
+          <h2 className="text-4xl font-semibold text-center text-gray-900 mb-12">
+            Frequently asked questions
+          </h2>
+
           <FaqAccordion />
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-20 px-6">
-        <motion.div
-          className="mx-auto max-w-4xl text-center"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={staggerContainer}
-        >
-          <motion.h2
-            className="text-3xl font-semibold text-gray-900"
-            variants={fadeUp}
-          >
-            Start selling clinic gift cards today
-          </motion.h2>
-          <motion.p className="mt-4 text-gray-600" variants={fadeUp}>
-       See how HealVare Gift Cards help clinics generate revenue and attract new patients.
-          </motion.p>
-          <motion.div variants={fadeUp} className="mt-8 inline-flex justify-center">
-            <motion.div
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 400, damping: 18 }}
-            >
-              <Button className="rounded-half px-10 h-11 cursor-pointer" onClick={() => navigate("/book-demo")}>
-                Schedule a demo
-              </Button>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </section>
-<MarketingDemoCTA />
+      {/* CTA */}
 
+      <section className="py-20 px-6">
+        <div className="mx-auto max-w-4xl text-center">
+
+          <h2 className="text-3xl font-semibold text-gray-900">
+            Grow Your Clinic with Healthcare Gift Card Management Software
+          </h2>
+
+          <p className="mt-4 text-gray-600">
+            Manage digital gift cards, patient promotions, payment workflows,
+            and redemption tracking using secure Healthcare Gift Card Software.
+          </p>
+
+          <div className="mt-8 inline-flex justify-center">
+            <Button
+              className="rounded-half px-10 h-11 cursor-pointer"
+              onClick={() => navigate("/book-demo")}
+            >
+              Book a Live Demo
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <MarketingDemoCTA />
     </div>
   )
 }

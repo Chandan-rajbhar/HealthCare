@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react";
 import {
   motion,
   useInView,
@@ -6,13 +6,12 @@ import {
   useScroll,
   useTransform,
   type Variants,
-} from "framer-motion"
-import { ChevronDown, Bot, Clock, CheckCircle2, Repeat } from "lucide-react"
-import { Button } from "@/components/ui/button"
- "@/pages/FooterPage/footerpage"
-import CommonTestimonials from "@/components/CommonTestimonials"
-import { MarketingDemoCTA } from "@/components/MarketingDemoCTA"
-import { useNavigate } from "react-router-dom"
+} from "framer-motion";
+import { ChevronDown, Bot, Clock, CheckCircle2, Repeat } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import CommonTestimonials from "@/components/CommonTestimonials";
+import { MarketingDemoCTA } from "@/components/MarketingDemoCTA";
+import { useNavigate } from "react-router-dom";
 
 // ─── Animation Variants ────────────────────────────────────────────────────────
 
@@ -23,7 +22,7 @@ const fadeUp: Variants = {
     y: 0,
     transition: { duration: 0.6, ease: "easeInOut" },
   },
-} satisfies Variants
+} satisfies Variants;
 
 const staggerContainer: Variants = {
   hidden: {},
@@ -33,7 +32,7 @@ const staggerContainer: Variants = {
       delayChildren: 0.1,
     },
   },
-} satisfies Variants
+} satisfies Variants;
 
 const cardVariant: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.97 },
@@ -43,7 +42,7 @@ const cardVariant: Variants = {
     scale: 1,
     transition: { duration: 0.55, ease: "easeInOut" },
   },
-} satisfies Variants
+} satisfies Variants;
 
 // ─── Reusable scroll-triggered wrapper ────────────────────────────────────────
 
@@ -52,12 +51,12 @@ function ScrollReveal({
   className = "",
   delay = 0,
 }: {
-  children: React.ReactNode
-  className?: string
-  delay?: number
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
 }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: "-80px" })
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <motion.div
@@ -69,7 +68,7 @@ function ScrollReveal({
     >
       {children}
     </motion.div>
-  )
+  );
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -77,55 +76,80 @@ function ScrollReveal({
 const FEATURES = [
   {
     icon: Bot,
-    title: "Automated workflows",
-    description: "Automate repetitive clinic tasks and reduce manual work.",
+    title: "Automated Appointment Workflows",
+    description:
+      "Automate bookings, confirmations, cancellations, and scheduling workflows.",
   },
   {
     icon: Clock,
-    title: "Scheduled actions",
-    description: "Schedule tasks to run automatically at the right time.",
+    title: "Patient Communication Automation",
+    description:
+      "Send automated SMS reminders, notifications, and patient updates.",
   },
   {
     icon: Repeat,
-    title: "Recurring automation",
-    description: "Create recurring workflows for daily or weekly clinic operations.",
+    title: "Task & Workflow Management",
+    description:
+      "Streamline operational tasks and automate repetitive clinic processes.",
   },
   {
     icon: CheckCircle2,
-    title: "Task tracking",
-    description: "Track automated tasks and ensure nothing is missed.",
+    title: "Centralized Healthcare Dashboard",
+    description:
+      "Manage clinic operations and workflow automation from one platform.",
   },
-]
+];
+
 const FAQ_ITEMS = [
   {
-    q: "What is task automation?",
-    a: "Task automation allows clinics to automatically perform repetitive operational tasks without manual effort.",
+    q: "What is Healthcare Workflow Automation Software?",
+    a: "Healthcare Workflow Automation Software helps clinics automate administrative tasks, scheduling workflows, patient communication, reminders, and operational processes from one centralized platform.",
   },
   {
-    q: "What types of tasks can be automated?",
-    a: "Clinics can automate reminders, follow-ups, administrative workflows, and operational tasks.",
+    q: "How does clinic automation software improve healthcare operations?",
+    a: "It reduces manual work, streamlines operational workflows, improves staff productivity, automates communication, and enhances scheduling efficiency.",
   },
   {
-    q: "Can tasks run automatically on a schedule?",
-    a: "Yes. Automated workflows can be scheduled to run at specific times or recurring intervals.",
+    q: "Can clinics automate appointment reminders and patient communication?",
+    a: "Yes. The software supports automated SMS reminders, email notifications, appointment confirmations, and patient follow-up workflows.",
   },
   {
-    q: "Does automation reduce manual work?",
-    a: "Yes. Automation helps clinics reduce administrative workload and improve operational efficiency.",
+    q: "Does the software help reduce administrative workload?",
+    a: "Absolutely. Automation tools simplify repetitive healthcare tasks such as scheduling, communication, intake processing, and workflow management.",
   },
   {
-    q: "Is task automation customizable?",
-    a: "Yes. Clinics can configure automation workflows based on their processes and operational needs.",
+    q: "Is Healthcare Workflow Automation Software suitable for multi-provider clinics?",
+    a: "Yes. The platform supports clinics, healthcare groups, hospitals, and multi-provider medical practices with scalable workflow automation tools.",
   },
-]
-const LOGOS = ["MediCare", "HealthFirst", "CareSync", "MedPlus", "ClinicHub", "WellCare"]
+  {
+    q: "Can workflow automation reduce scheduling errors?",
+    a: "Yes. Automated scheduling and workflow coordination help reduce missed appointments, double bookings, and operational conflicts.",
+  },
+  {
+    q: "Does the platform integrate with healthcare systems and EHR software?",
+    a: "Yes. Healthcare Workflow Automation Software can integrate with Electronic Health Record Software, scheduling systems, patient communication tools, and healthcare management platforms.",
+  },
+  {
+    q: "Can automation improve patient experience?",
+    a: "Yes. Faster communication, smoother scheduling, and reduced administrative delays help create a better healthcare experience for patients.",
+  },
+];
+
+const LOGOS = [
+  "MediCare",
+  "HealthFirst",
+  "CareSync",
+  "MedPlus",
+  "ClinicHub",
+  "WellCare",
+];
 
 // ─── FAQ Accordion ─────────────────────────────────────────────────────────────
 
 function FaqAccordion() {
-  const [openIndex, setOpenIndex] = useState<number>(0)
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: "-60px" })
+  const [openIndex, setOpenIndex] = useState<number>(0);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
 
   return (
     <motion.div
@@ -136,7 +160,8 @@ function FaqAccordion() {
       variants={staggerContainer}
     >
       {FAQ_ITEMS.map((item, index) => {
-        const isOpen = openIndex === index
+        const isOpen = openIndex === index;
+
         return (
           <motion.div key={index} variants={cardVariant}>
             <button
@@ -145,14 +170,20 @@ function FaqAccordion() {
             >
               <span
                 className={`text-base font-semibold transition-colors duration-200 ${
-                  isOpen ? "text-gray-900" : "text-gray-600 group-hover:text-gray-800"
+                  isOpen
+                    ? "text-gray-900"
+                    : "text-gray-600 group-hover:text-gray-800"
                 }`}
               >
                 {item.q}
               </span>
+
               <motion.span
                 animate={{ rotate: isOpen ? 180 : 0 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] as const }}
+                transition={{
+                  duration: 0.3,
+                  ease: [0.22, 1, 0.36, 1] as const,
+                }}
                 className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${
                   isOpen ? "bg-primary text-white" : "bg-gray-100 text-gray-400"
                 }`}
@@ -168,18 +199,23 @@ function FaqAccordion() {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }}
+                  transition={{
+                    duration: 0.35,
+                    ease: [0.22, 1, 0.36, 1] as const,
+                  }}
                   className="overflow-hidden"
                 >
-                  <p className="text-gray-500 text-sm leading-relaxed pb-6">{item.a}</p>
+                  <p className="text-gray-500 text-sm leading-relaxed pb-6">
+                    {item.a}
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>
           </motion.div>
-        )
+        );
       })}
     </motion.div>
-  )
+  );
 }
 
 // ─── Deep Dive Row ─────────────────────────────────────────────────────────────
@@ -191,14 +227,14 @@ function DeepDiveRow({
   body,
   bullets,
 }: {
-  imageLeft: boolean
-  eyebrow: string
-  heading: string
-  body: string
-  bullets: string[]
+  imageLeft: boolean;
+  eyebrow: string;
+  heading: string;
+  body: string;
+  bullets: string[];
 }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: "-100px" })
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
 
   const imageVariant = {
     hidden: { opacity: 0, x: imageLeft ? -32 : 32 },
@@ -207,32 +243,37 @@ function DeepDiveRow({
       x: 0,
       transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
     },
-  }
+  };
 
   const textVariant = {
     hidden: { opacity: 0, x: imageLeft ? 32 : -32 },
     show: {
       opacity: 1,
       x: 0,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const, delay: 0.1 },
+      transition: {
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: 0.1,
+      },
     },
-  }
+  };
 
   return (
     <div
       ref={ref}
-        className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full"
-
+      className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full"
     >
       <motion.div
-        className={`rounded-2xl overflow-hidden bg-gray-100 ${!imageLeft ? "order-1 lg:order-2" : ""}`}
+        className={`rounded-2xl overflow-hidden bg-gray-100 ${
+          !imageLeft ? "order-1 lg:order-2" : ""
+        }`}
         initial="hidden"
         animate={inView ? "show" : "hidden"}
         variants={imageVariant}
       >
         <img
           src="/dashboard.png"
-          alt="Feature preview"
+          alt="Healthcare Workflow Automation Software"
           className="w-full h-full max-w-full object-cover"
         />
       </motion.div>
@@ -243,9 +284,14 @@ function DeepDiveRow({
         animate={inView ? "show" : "hidden"}
         variants={textVariant}
       >
-        <p className="text-xs text-primary uppercase tracking-widest mb-3">{eyebrow}</p>
+        <p className="text-xs text-primary uppercase tracking-widest mb-3">
+          {eyebrow}
+        </p>
+
         <h3 className="text-3xl font-semibold text-gray-900 mb-4">{heading}</h3>
+
         <p className="text-gray-500 leading-relaxed mb-6">{body}</p>
+
         <motion.ul
           className="space-y-2 text-sm text-gray-600"
           variants={staggerContainer}
@@ -268,99 +314,130 @@ function DeepDiveRow({
         </motion.ul>
       </motion.div>
     </div>
-  )
+  );
 }
 
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
-export default function TaskAutomation(){
+export default function TaskAutomation() {
   const navigate = useNavigate();
-  // Subtle parallax on hero image
-  const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
-  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 40])
+
+  const heroRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 40]);
+
+  useEffect(() => {
+    document.title = "Healthcare Workflow Automation Software | Automate Daily Clinic Operations"
+
+    const setMeta = (name: string, content: string) => {
+      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null
+
+      if (!el) {
+        el = document.createElement("meta")
+        el.setAttribute("name", name)
+        document.head.appendChild(el)
+      }
+
+      el.setAttribute("content", content)
+    }
+
+    setMeta(
+      "description",
+      "Automate scheduling, patient communication, appointment reminders, administrative tasks, and healthcare workflows using secure Healthcare Workflow Automation Software built for clinics and healthcare providers."
+    )
+  }, [])
 
   return (
-   <div className="bg-white overflow-x-hidden">
-
+    <div className="bg-white overflow-x-hidden">
       {/* ── HERO ── */}
-      {/* <section ref={heroRef} className="w-full bg-gray-50 py-20 overflow-hidden"> */}
-      <section ref={heroRef} className="w-full bg-gray-50 min-h-[85vh] flex items-center py-20 overflow-hidden">
-        {/* <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"> */}
+
+      <section
+        ref={heroRef}
+        className="w-full bg-gray-50 min-h-[85vh] flex items-center py-20 overflow-hidden"
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+          {/* Left */}
 
-          {/* Left — staggered text reveal */}
-      <motion.div
-  className="flex flex-col justify-center"
-  initial="hidden"
-  animate="show"
-  variants={staggerContainer}
->
-
+          <motion.div
+            className="flex flex-col justify-center"
+            initial="hidden"
+            animate="show"
+            variants={staggerContainer}
+          >
             <motion.h1
-              className="text-4xl lg:text-5xl font-semibold text-gray-900 leading-tight mb-6"
+              className="text-3xl lg:text-4xl font-semibold text-gray-900 leading-tight mb-6"
               variants={fadeUp}
             >
-            Automate your clinic’s daily tasks
+              Automate Your Clinic’s Daily Tasks with Healthcare Workflow
+              Automation Software
             </motion.h1>
 
-            <motion.p
-              className="text-gray-600 text-lg mb-4"
-              variants={fadeUp}
-            >
-        Automate repetitive clinic tasks and save time for what matters most — patient care.
+            <motion.p className="text-gray-600 text-lg mb-6" variants={fadeUp}>
+              Streamline clinic operations, reduce administrative workload,
+              automate repetitive healthcare tasks, and improve operational
+              efficiency using secure Healthcare Workflow Automation Software
+              designed for modern clinics and healthcare providers.
             </motion.p>
 
-            <motion.p
-              className="text-gray-500 mb-8 leading-relaxed"
-              variants={fadeUp}
-            >
-           HealVare Task Automation helps clinics streamline operations by automating reminders, workflows, and routine tasks.
-            </motion.p>
-
-            <motion.div variants={fadeUp}>
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                className="inline-block"
+            <motion.div className="flex flex-wrap gap-4" variants={fadeUp}>
+              <Button
+                className="rounded-half px-8 h-11 cursor-pointer"
+                onClick={() => navigate("/free-trial")}
               >
-                <Button className="rounded-half px-10 h-11 cursor-pointer" onClick={() => navigate("/book-demo")}>
-                  Book a Demo
-                </Button>
-              </motion.div>
+                Start Free Trial
+              </Button>
+
+              <Button
+                variant="outline"
+                className="rounded-half px-8 h-11 cursor-pointer"
+                onClick={() => navigate("/book-demo")}
+              >
+                Schedule a Live Demo
+              </Button>
             </motion.div>
           </motion.div>
 
-          {/* Right — image with parallax */}
-       <motion.div
-  className="relative flex items-center justify-center min-h-[400px] lg:min-h-[500px]"
-  initial={{ opacity: 0, scale: 0.96, x: 32 }}
-  animate={{ opacity: 1, scale: 1, x: 0 }}
-  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const, delay: 0.15 }}
->
-  <motion.div
-    className="rounded-2xl overflow-hidden shadow-xl w-full h-full max-h-[550px]"
-    style={{ y: heroImageY }}
-  >
-    <img
-      src="/dashboard.png"
-      alt="Insurance Claims Preview"
-      className="w-full h-full object-cover object-top"
-    />
-  </motion.div>
-</motion.div>
+          {/* Right */}
+
+          <motion.div
+            className="relative flex items-center justify-center min-h-[400px] lg:min-h-[500px]"
+            initial={{ opacity: 0, scale: 0.96, x: 32 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{
+              duration: 0.8,
+              ease: [0.22, 1, 0.36, 1] as const,
+              delay: 0.15,
+            }}
+          >
+            <motion.div
+              className="rounded-2xl overflow-hidden shadow-xl w-full h-full max-h-[550px]"
+              style={{ y: heroImageY }}
+            >
+              <img
+                src="/dashboard.png"
+                alt="Healthcare Workflow Automation Dashboard"
+                className="w-full h-full object-cover object-top"
+              />
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── LOGOS BAR ── */}
+
       <section className="bg-white py-12 px-6 border-y border-gray-100">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal>
             <p className="text-center text-sm text-gray-400 uppercase tracking-widest mb-8">
-              Trusted by 500+ clinics worldwide
+              Trusted by healthcare providers worldwide
             </p>
           </ScrollReveal>
+
           <motion.div
             className="flex flex-wrap justify-center items-center gap-10 opacity-40 grayscale"
             initial="hidden"
@@ -384,17 +461,24 @@ export default function TaskAutomation(){
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
+      {/* ── OVERVIEW ── */}
+
       <section className="bg-gray-50 py-20 px-6">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal>
             <h2 className="text-3xl font-semibold text-center text-gray-900">
-             Everything you need to automate clinic operations
+              Simplify Healthcare Operations with Intelligent Clinic Automation
+              Software
             </h2>
           </ScrollReveal>
+
           <ScrollReveal delay={0.08}>
-            <p className="text-center text-gray-600 mt-4 max-w-2xl mx-auto">
-             Automate repetitive tasks, streamline clinic workflows, and improve operational efficiency.
+            <p className="text-center text-gray-600 mt-4 max-w-3xl mx-auto">
+              Healthcare teams spend valuable time managing repetitive
+              administrative tasks. Clinic Workflow Automation Software helps
+              automate scheduling, patient communication, appointment reminders,
+              operational workflows, and daily healthcare processes from one
+              centralized platform.
             </p>
           </ScrollReveal>
 
@@ -406,7 +490,8 @@ export default function TaskAutomation(){
             variants={staggerContainer}
           >
             {FEATURES.map((feature) => {
-              const Icon = feature.icon
+              const Icon = feature.icon;
+
               return (
                 <motion.div
                   key={feature.title}
@@ -420,64 +505,200 @@ export default function TaskAutomation(){
                 >
                   <motion.div
                     className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4"
-                    whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
+                    whileHover={{
+                      rotate: [0, -10, 10, 0],
+                      transition: { duration: 0.4 },
+                    }}
                   >
                     <Icon className="w-5 h-5 text-primary" />
                   </motion.div>
-                  <h3 className="font-semibold text-lg text-gray-900">{feature.title}</h3>
-                  <p className="mt-2 text-gray-600 text-sm">{feature.description}</p>
+
+                  <h3 className="font-semibold text-lg text-gray-900">
+                    {feature.title}
+                  </h3>
+
+                  <p className="mt-2 text-gray-600 text-sm">
+                    {feature.description}
+                  </p>
                 </motion.div>
-              )
+              );
             })}
           </motion.div>
         </div>
       </section>
 
-      {/* ── PRODUCT DEEP DIVE ── */}
+      {/* ── DAILY OPERATIONS ── */}
+
       <section className="bg-white py-20 px-6">
         <div className="mx-auto max-w-6xl space-y-24">
-<DeepDiveRow
-  imageLeft
- eyebrow="Workflow automation"
-heading="Automate repetitive clinic tasks"
-body="Set up automated workflows to handle routine administrative and operational tasks."
-bullets={[
-  "Automated task triggers",
-  "Workflow scheduling",
-  "Reduce manual clinic work",
-]}
-/>
+          <DeepDiveRow
+            imageLeft
+            eyebrow="Clinic Operations"
+            heading="Automate Repetitive Clinic Tasks & Improve Staff Productivity"
+            body="Reduce manual administrative work and help healthcare teams focus more on patient care by automating time-consuming clinic operations and healthcare workflows."
+            bullets={[
+              "Automated appointment scheduling",
+              "Patient reminder automation",
+              "Digital intake & registration workflows",
+            ]}
+          />
 
-<DeepDiveRow
-  imageLeft={false}
-eyebrow="Smart scheduling"
-heading="Run tasks automatically"
-body="Schedule recurring tasks and automated workflows so your clinic runs smoothly every day."
-bullets={[
-  "Recurring workflow automation",
-  "Scheduled operational tasks",
-  "Improved clinic efficiency",
-]}
-/>
+          <DeepDiveRow
+            imageLeft={false}
+            eyebrow="Workflow Coordination"
+            heading="Automate Internal Tasks & Healthcare Workflow Management"
+            body="Improve operational efficiency with intelligent workflow coordination tools that simplify clinic management, staff communication, and task tracking."
+            bullets={[
+              "Task & staff coordination",
+              "Operational workflow management",
+              "Connected healthcare workflows",
+            ]}
+          />
+        </div>
+      </section>
+
+      {/* ── HEALTHCARE MANAGEMENT ── */}
+
+      <section className="bg-gray-50 py-20 px-6">
+        <div className="mx-auto max-w-6xl">
+          <ScrollReveal>
+            <h2 className="text-3xl font-semibold text-center text-gray-900">
+              Healthcare Workflow Automation Software Built for Clinic
+              Efficiency
+            </h2>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.08}>
+            <p className="text-center text-gray-600 mt-4 max-w-3xl mx-auto">
+              Improve healthcare operations by connecting scheduling, patient
+              communication, administrative tasks, and clinic management
+              workflows into one intelligent automation platform.
+            </p>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mt-14">
+            {[
+              "Reduced Administrative Burden",
+              "Faster Clinic Operations",
+              "Improved Staff Productivity",
+              "Better Appointment Coordination",
+              "Streamlined Patient Management",
+            ].map((item) => (
+              <div
+                key={item}
+                className="bg-white border rounded-xl p-6 text-center shadow-sm"
+              >
+                <p className="font-medium text-gray-800">{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── AUTOMATION FEATURES ── */}
+
+      <section className="bg-white py-20 px-6">
+        <div className="mx-auto max-w-6xl space-y-24">
+          <DeepDiveRow
+            imageLeft
+            eyebrow="Workflow Automation"
+            heading="Automate Healthcare Workflows & Optimize Daily Clinic Operations"
+            body="Modern healthcare organizations need scalable workflow automation tools that improve efficiency, reduce errors, and simplify clinic management processes."
+            bullets={[
+              "Automated appointment reminders",
+              "Smart workflow triggers",
+              "Real-time task management",
+            ]}
+          />
+
+          <DeepDiveRow
+            imageLeft={false}
+            eyebrow="Connected Systems"
+            heading="Coordinate Scheduling, Communication & Healthcare Systems"
+            body="Integrate workflows across scheduling systems, patient communication tools, and healthcare management software from one centralized platform."
+            bullets={[
+              "Connected system coordination",
+              "Workflow integration tools",
+              "Centralized healthcare dashboard",
+            ]}
+          />
+        </div>
+      </section>
+
+      {/* ── BUSINESS IMPACT ── */}
+
+      <section className="bg-gray-50 py-20 px-6">
+        <div className="mx-auto max-w-6xl">
+          <ScrollReveal>
+            <h2 className="text-3xl font-semibold text-center text-gray-900">
+              Improve Patient Experience While Streamlining Clinic Operations
+            </h2>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.08}>
+            <p className="text-center text-gray-600 mt-4 max-w-3xl mx-auto">
+              Healthcare Workflow Automation Software helps clinics improve
+              operational efficiency, reduce delays, strengthen patient
+              communication, and support better healthcare delivery experiences.
+            </p>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-14">
+            {[
+              {
+                title: "Faster Administrative Processes",
+                desc: "Automate repetitive workflows and reduce manual data entry tasks.",
+              },
+              {
+                title: "Better Appointment Management",
+                desc: "Improve scheduling accuracy and reduce operational bottlenecks.",
+              },
+              {
+                title: "Enhanced Patient Communication",
+                desc: "Keep patients informed with automated reminders and notifications.",
+              },
+              {
+                title: "Increased Clinic Productivity",
+                desc: "Allow healthcare teams to spend less time on administrative work and more time delivering care.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="bg-white border rounded-2xl p-8 shadow-sm"
+              >
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  {item.title}
+                </h3>
+
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ── TESTIMONIALS ── */}
+
       <CommonTestimonials />
 
       {/* ── FAQ ── */}
+
       <section className="bg-white py-20 px-6">
         <div className="mx-auto max-w-3xl">
           <ScrollReveal>
             <h2 className="text-4xl font-semibold text-center text-gray-900 mb-12">
-              Frequently asked questions
+              Frequently Asked Questions
             </h2>
           </ScrollReveal>
+
           <FaqAccordion />
         </div>
       </section>
 
-      {/* ── CTA ── */}
+      {/* ── FINAL CTA ── */}
+
       <section className="py-20 px-6">
         <motion.div
           className="mx-auto max-w-4xl text-center"
@@ -490,26 +711,43 @@ bullets={[
             className="text-3xl font-semibold text-gray-900"
             variants={fadeUp}
           >
-            Automate your clinic operations with HealVare
+            Modernize Clinic Operations with Healthcare Workflow Automation
+            Software
           </motion.h2>
-          <motion.p className="mt-4 text-gray-600" variants={fadeUp}>
-       See how HealVare Task Automation helps clinics streamline workflows and save time.
+
+          <motion.p
+            className="mt-4 text-gray-600 max-w-2xl mx-auto"
+            variants={fadeUp}
+          >
+            Automate scheduling, patient communication, operational workflows,
+            appointment management, and daily clinic tasks using secure,
+            cloud-based Healthcare Workflow Automation Software built for
+            healthcare organizations.
           </motion.p>
-          <motion.div variants={fadeUp} className="mt-8 inline-flex justify-center">
-            <motion.div
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 400, damping: 18 }}
+
+          <motion.div
+            variants={fadeUp}
+            className="mt-8 flex flex-wrap justify-center gap-4"
+          >
+            <Button
+              className="rounded-half px-8 h-11 cursor-pointer"
+              onClick={() => navigate("/book-demo")}
             >
-              <Button className="rounded-half px-10 h-11 cursor-pointer" onClick={() => navigate("/book-demo")}>
-                Schedule a demo
-              </Button>
-            </motion.div>
+              Book a Live Demo
+            </Button>
+
+            <Button
+              variant="outline"
+              className="rounded-half px-8 h-11 cursor-pointer"
+              onClick={() => navigate("/free-trial")}
+            >
+              Start Free Trial
+            </Button>
           </motion.div>
         </motion.div>
       </section>
-<MarketingDemoCTA />
 
+      <MarketingDemoCTA />
     </div>
-  )
+  );
 }
